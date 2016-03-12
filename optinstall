@@ -1,0 +1,4 @@
+#! /bin/bash
+make clean
+make CFLAGS="-O2 -g0 -march=native -std=gnu99"
+sudo make install

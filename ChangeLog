@@ -1,0 +1,608 @@
+12 March 2016
+    ItzamC 7.0
+    
+  * Converted to 64-bit only
+  
+  * Refreshed projects for Github hosting
+  
+  * Changed to BSD license only
+  
+  * Defaults to multi-threaded
+
+ 1 July 2012
+    Itzam/C 6.0.5
+    
+  * Minor code refresh to avoid bitrot
+  
+  * Testing with versions of GCC up to 4.7
+  
+17 September 2011
+    Itzam/C 6.0.4
+
+  * Added "overwrite" function for datafiles, to allow partial modification
+    of existing records.
+
+28 July 2011
+    Itzam/C 6.0.3
+
+  * Changed itzam_btree_find such that if the returned_key pointer is NULL,
+    it does not copy the returned key. This slightly speeds up searches where
+    you only need to check for key existence, and not consistency.
+
+  * Major rewrite of itzam_btree_test_threads.c for Unix / Linux systems.
+    It now compares single versus multi thread performance.
+
+  * Fixed a bug in setting flag in file-level unlock.
+
+  * Renamed datafile lock flag to avoid confusion.
+
+  * Fixed a few typos (typoes?) in comments. I'm sure there are more. :)
+
+  * Fixed ugliness in the documentation headings.
+
+  * Fixed warnings from test programs about printf formats.
+
+  * Itzam/C should NOT be compiled with GCC's -ftree-vectorize flag; it will
+    SEGFAULT when run. Recommended CFLAGS for compiling on a GNU/Linux system are:
+
+    -std=gnu99 -O3 -Wall -pedantic -fno-tree-vectorize -g0 -march=native
+
+7 July 2011
+    Itzam/C 6.0.2
+
+  * Fixed libpthread link problem on some systems
+
+6 July 2011
+    Itzam/C 6.0.1
+
+  * Fixed stupid error in configure.ac that prevented .so files from being generated
+    on some systems.
+
+  * Fixed pointer cast warning in itzam_btree_test_strvar.c
+
+1 June 2011
+    Itzam/C 6.0.0
+
+    <<<<----------------- IMPORTANT NOTICE -------------------->>>>
+    Compatability warning: Data files created with previous versions
+    are not compatible with version 6.0 due to changes in struct
+    packing. You can change the pack() pragma in itzam.h to retsore
+    compatability with older files.
+    <<<<----------------- IMPORTANT NOTICE -------------------->>>>
+
+  * Massive code cleanup and cruft removal. After 20 years, the
+    codebase had gotten kind of cranky, and it's been refurbished with
+    great vigor.
+
+  * Simplified OS detection. Itzam now recognizes two operating systems,
+    Windows and POSIX, both in 32- and 64-bit modes. Linxu is, of
+    course, a POSIX system.
+
+  * Incorporated a number of features that were built into proprietary
+    variations of Itzam.
+
+  * Exhaustive testing in multiprocessing environments, with dozens of
+    threads and several processes accessing an Itzam database
+    simultaneously. This codebase is the core of mission critical apps
+    running 24/7/265 reliably. Coordination is implemented via shared
+    OS mutexes.
+
+  * This code is 4 to 5 times faster than any previous version of Itzam,
+    largely due to the use of shared memory for holding frequently
+    accessed information.
+
+  * Removed the hash table and matrix index types.
+
+  * All new test suite.
+
+  * All new projects (Windows Visual Studio 10.0) and autotools scripts
+    (Unix)
+
+  * Brand new, complete documentation, neatly formatted in PDF and HTML.
+
+  * The default error handler can now be assigned.
+
+5 April 2011
+    Itzam/C 5.1.0
+
+  * Added cross-platform mutexes for controlling multithreaded access
+    to datafiles and indexes. Within a single thread group, the mutexes
+	automatically avoid collisions between threads using Itzam fucntions
+	and structures. File locking (which already existed) should be used
+	when running separate executable images.
+
+	Mutexes are implemented for Windows and POSIX pthreads (works fine
+	on modern Linux and libc).
+
+  * Added additional error responses in many functions.
+
+  * Fixed an egregiously stupid problem involving chickens and eggs,
+	wherein I tried to cook an egg laid by a NULL chicken, to announce
+	the non-existence of the chicken that could not have laid the egg.
+
+  * Replaced lost file format version check.
+
+  * Made itzam_datafile_get_next_open a static (i.e., private) function.
+
+  * Fixed sychronization bug in field headers between threads.
+
+1 April 2010
+    Itzam/C 5.0.0
+
+  * <<----------------- IMPORTANT NOTICE ----------------->>>>
+    Version 5.0 of Itzam/Core is *not* source-code compatible with
+    previous versions.
+
+    If you have data stores based on a previous Itzam release, continue to
+    use that release. If you have questions about a conversion, please
+    contact Itzam's author at scott.ladd@coyotegulch.com.
+    <<----------------- IMPORTANT NOTICE ----------------->>>>
+
+  * Expanded, fully-commented tutorial program (see /tutorial directory)
+
+  * Itzam/Code is now renamed Itzam/C, or simply Itzam. This is the
+    reference implementation of the engine.
+
+  * Moved debug code to tools package
+
+  * 100% tested and verified on 32- and 64-bit Windows and Linux
+
+  * Modern 32- and 64-bit Windows DLL projects for Visual Studio 2008
+
+  * Revamped architecture of testing modules
+
+  * Removed all strings from Itzam/C; completely character set
+    neutral (tested with ASCII-8 and Unicode builds)
+
+  * Added infrstructure to support embedded XML shemea for future
+    Itzam/Designer product
+
+  * Optimizations throughout (nothing dramatic)
+
+  * Reduce library footprint.
+
+18 November 2009
+    Itzam/Core 4.0.8
+
+  * Updated for GPL 3
+
+  * Minor bug fixes, documentation updates, and clarifications
+
+17 June 2008
+    Itzam/Core 4.0.0
+
+  * <<----------------- IMPORTANT NOTICE ----------------->>>>
+    Version 4.0 of Itzam/Core is *not* compatible with any previous version.
+    If you have data stores based on a previous Itzam release, continue to
+    use that release. If you have questions about a conversion, please
+    contact Itzam's author at scott.ladd@coyotegulch.com.
+
+  * CHANGE: The basic structure of an Itzam file now stores an array of
+            fixed-length keys values for both B-tree and hash indexes.
+            This change reduced the number of intrinsic I/O operations
+            by eliminating the need to indirectly reference separately-stored
+            keys and records. This change also simplified many function
+            signatures.
+
+            What does this change mean? Essentially, each "key" is a fixed-length
+	    value that can contain anything -- including references to records
+            stored anywhere. See the tutorial for examples of how this works.
+
+  * CHANGE: B-tree databases no longer support the "optimize" functions, as
+            these are no longer necessary due to the revised architecture.
+
+19 October 2006
+    Itzam/Core 3.1.1
+
+    CHANGE: Random number generator seed now uses /dev/random when possible
+            instead of time.
+
+    FIXED:  Changed order of page writes in key redistribution.
+
+    FIXED:  Removed unnecessary copying of links in removal.
+
+    FIXED:  Minor indentation issues.
+
+24 September 2006
+    Itzam/Core 3.1.0
+
+  * CHANGE: As per requests from customers, Itzam now compiles as 100%
+            Standard ANSI/ISO C, without any POSIX headers or functions.
+
+            Using the GNU toolchain and building with GCC, the additional
+            configuration options are:
+
+                --enable-stdc
+                    cause compilation with the "-std=c99 -DSTDC -DSTDCIO"
+
+                --enable-stdc89
+                    cause compilation with "-std=c89 -DSTDC89 -DSTDCIO"
+
+                --enable-stdio
+                    cause compilation with "-DSTDCIO"
+
+             By default, the configure script will generate Makefiles that
+             compile Itzam with with --std=gnu99.
+
+             All compiles use "-pedantic -Wall". POSIX I/O is used by default
+             unless one of the Standard C symbols above is defined.
+
+             On Microsoft C++, you will need to define the symbols in the project
+             settings if you do not want to compile for Visual C++'s default
+             flavor of C.
+
+  * CHANGE: Removed static data from the library, for better compatability
+            with some embedded platforms.
+
+  * CHANGE: Removed the itzam_comparator_string_ignore_case function,
+            since ANSI C offers no built-in way of performing a case-
+            insenstive strong comparison.
+
+    FIXED:  Various annoying bugs in files like README.
+
+14 September 2006
+    Itzam/Core 3.0.1
+
+  * CHANGE: Can be compiled with either POSIX or Standard C I/O. If
+            STDC_IO is defined at compile time, Itzam uses Standard
+            C I/O (fopen, fwrite, etc); otherwise, it uses POSIX I/O
+            (open, write, etc.). This can be easily customized for
+            other I/O libraries; see the macro definitions in itzam.h.
+
+            For GNU toolchain builds, the ./configure option --enable-stdcio
+            generates makefiles that include -DSTDC_IO. Without that option,
+            the library is generated for POSIX I/O.
+
+  * FIXED   Removed duplicate "rollback" in datafile open.
+
+    CHANGE: The usual comment and code clean-ups.
+
+27 August 2006
+    Itzam/Core 3.0.0
+
+  * NEW:    Atomic file operations (transactions with commit/rollback).
+
+  * NEW:    Hash-based indexes
+
+  * NEW:    Memory allocation and release functions to generate Itzam
+            data structures.
+
+    CHANGE: Default compile now uses -pedantic -Wall switches to help
+            maintain code quality.
+
+    CHANGE: Minor improvements and clean-ups in test programs
+
+    CHANGE: Comment and code clean-up
+
+
+20 July 2006
+    Itzam/Core 2.8.2
+
+    FIXED:  Bug that caused file sizes to increase under some
+            circumstances
+
+    FIXED:  Bug in btree analysis that reported the wrong number
+            of pages
+
+    FIXED:  Minor inefficiencies in deleted record list.
+
+28 February 2006
+    Itzam/Core 2.8.1 release
+
+    FIXED:  Clean-up freeing of deleted list in itzam_data_close.
+
+    FIXED:  Uninitialized deleted list pointer.
+
+21 February 2006
+    Itzam/Core 2.8.0 release
+
+  * FIXED:  Bug in maintaining correct deleted record list across
+            multiple processes.
+
+  * CHANGE: ITZAM_UNKNOWN renamed to ITZAM_FAILED
+
+    ADDED:  Functions to create index structures inside an existing
+            datafile; this allows multiple indexes to reside within a
+            single datafile. This affects the B-tree and matrix indexes.
+
+    CHANGE: Minor code clean-ups
+
+12 January 2006
+    Itzam/Core 2.7.1 release
+
+    FIXED:  Windows only: Benign memory corruption bug caused by
+            difference in sizeof(bool) between C and C++.
+
+03 January 2006
+    Itzam/Core 2.7.0 release
+
+  * ADDED:  Predefined key comparators for integers (signed and unsigned,
+  *         32- and 64-bit) and strings (case sensitive and insensistive).
+
+  * ADDED:  Function to optimize a B-tree. Calling itzam_btree_optimize
+  *         creates a new B-tree with identical contents to the
+  *         original, but without any wasted space from deleted records.
+  *         This can be particularly beneficial if a large number of
+  *         records have been deleted, or if recently-added records are
+  *         too large for placement in slots created by prior deletions.
+  *
+  *         The optimized file can not overwrite the original B-tree
+  *         file. You can always delete the old file when the new one
+  *         is tested as acceptable. Itzam deliberately avoids replacing
+  *         old data automatically as a safety measure.
+
+  * CHANGE: Each index now has a schema reference. A database schema
+  *         will define relationships within a collection of table
+  *         schemas. This is in preparation for a future version of
+  *         Itzam that will support reflection and XML-based tools.
+
+  * CHANGE: Changed ITZAM_LOCK_* and itzam_lock_* to ITZAM_FILE_LOCK_*
+  *         and itzam_file_lock_* to avoid confusion with thread locks.
+
+    CHANGE: Search functions are now iterative instead of recursive,
+            resulting in a performance boost.
+
+    CHANGE: Refined datafile reading.
+
+    CHANGE: Divided utility programs into tests and tools.
+
+    CHANGE: The Visual Studio projects have been completely revised and
+            expanded for both VS2003 and VS2005.
+
+    NOTE:   When compiled with GCC, the code appears to perform
+            fastest if compiled with -fstrict-aliasing.
+
+    FIXED:  Tiny memory leak in creating B-tree iterators. I don't
+            know why Valgrind didn't find this before!
+
+    FIXED:  Overflow bug in "fillkill" test in itzam_btree_test.
+
+    FIXED:  Minor code and comment cleanup
+
+23 December 2005
+    Itzam/Core 2.6.0 release
+
+  * ADDED:  File locking via several user-selected mechanisms.
+  *         Itzam is now usable in a multi-user, multi-processor
+  *         application.
+  *
+  *         The type of locking is specified upon file creation
+  *         or opening, and may use operating system functions
+  *         (fcntl/fsync on Linux, _locking/_commit on WindowsXP) or
+  *         a secondary "lock file". In general, use ITZAM_FILE_LOCK_OS,
+  *         as it ties file access directly to the operating system.
+  *
+  *         PLEASE NOTE: File locking has been checked with as many
+  *         as 16 processes hitting a single database file with mixed
+  *         reads, writes, and removes; tests were performed on both
+  *         Linux 2.6.24 and WindowsXP SP2. HOWEVER, file locking is
+  *         highly dependent on device drivers and hardware
+  *         configuration.
+
+  * CHANGE: Replace Standard C buffered I/O with low-level UNIX-style
+  *         I/O (open, read, write, close). This is faster and works
+  *         better with file locking, but is somewhat less universal
+  *         due to silliness like Microsoft's addition of underscores
+  *         (open is _open in Visual C++, for example).
+
+  * UPDATE: The doc/api_ref.txt file has been updated to reflect all
+  *         of the recent changes.
+
+  * ADDED:  Data file headers now contain a "schema" reference.
+  *         This is not used in the current version of Itzam, but
+  *         will be used in the future when XML schemas are
+  *         implemented.
+
+  * ADDED:  Record headers now contain a signature, to be used
+  *         in future data recovery and analysis programs.
+
+  * CHANGE: Records are now tagged with a type, i.e. "B-tree page"
+  *         to facilitate future plans for data recovery tools.
+  *         These flags can be seen by running the itzam_data_dump
+  *         program on any Itzam file.
+
+    CHANGE: Massive changes to the main test program, itzam_btree_test.
+            These include a restructuring of the program, the ability
+            to begin testing from an existing file, and implementation
+            of optional multiple processes and threads.
+
+    CHANGE: Modified output file names for itzam_btree_test and
+            itzam_matrix_test.
+
+    CHANGE: Began adding 2006 copyright dates as file are modified.
+
+    FIXED:  Added checks to datafile functions so it doesn't try to
+            read/write/whatever on a file that isn't open.
+
+10 December 2005
+    Itzam/Core 2.5.0 release
+
+  * CHANGE: By default, the library is compiled for 32- or 64-bits
+  *         based on the definition of these C preprocessor macros:
+  *
+  *             ITZAM32 - forces 32-bit file pointers
+  *
+  *             ITZAM64 - forces 64-bit file pointers
+  *
+  *             JAVACOMPAT - forces 64-bit file pointers
+  *
+  *         If none of the above are explicitly defined, Itzam defaults
+  *         to 32-bit pointers, unless one of the following vendor
+  *         symbols is defined by the compiler:
+  *
+  *                          GNU GCC:  __LP64__
+  *
+  *              Intel C++ for Linux:  __LP64__, __IA64__
+  *
+  *             Microsoft Visual C++:  _M_X64, _M_IA64, _WIN64
+
+    ADDED:  New is_open functions for datafiles and btrees
+
+    ADDED:  itzam_btree_dump program
+
+    ADDED:  ITZAM_ERROR_READ_DELETED error when reading a deleted
+            record.
+
+    CLEAN:  Removed unused PAGE_ORDER from itzam_btree.cpp
+
+    CLEAN:  Removed unused "skip" function
+
+    CLEAN:  Removed redundant rewrite function
+
+    CLEAN:  Removed B-tree page cache structures from itzam.h
+
+    CLEAN:  Removed unused "max ref" code from B-trees
+
+    CLEAN:  Minor comment fixes.
+
+ 1 December 2005
+    Itzam/Core 2.4.2 release
+
+    FIXED:  Small memory leak in rare instance of btree key promotion
+
+    FIXED:  Removed unused declaration from itzam.h
+
+30 November 2005
+    Itzam/Core 2.4.1 release
+
+    FIXED:  Failure to initialize "max ref" component of btree header
+
+    CLEAN:  Removed extraneous definitions from itzam.h
+
+29 November 2005
+    Itzam/Core 2.4.0 release
+
+    IMPORTANT: Itzam now defaults to 32-bit file address; the
+    preprocessor macro ITZAM64 must be defined during
+    compilation to generate an Itzam library with 64-bit
+    addressing. Previous versions of Itzam defaulted to 64-bit
+    file addressing.
+
+    Fixed trivial warnings in various source files
+
+    Removed unused code from several modules
+
+    Renamed and reorganized test programs
+
+    Fixed Visual C++ code generation problem when removing records
+
+23 November 2005
+    Itzam/Core 2.3.1 release
+
+    Fixed bug in reopening empty file
+
+21 November 2005
+    Itzam/Core 2.3.0 release
+
+    Added "order" argument to itzam_btree_open, with associated constants
+
+    Removed in-memory page cache, which was *slower* than direct
+    page reads
+
+    Optimized B-tree search routine
+
+    Tested with over 4 billion record operations
+
+15 November 2005
+    Itzam/Core 2.2.0 release
+
+    New "matrix" index type
+
+    Fixed memory memory subtle leaks
+
+    Faster Btree lookups
+
+10 November 2005
+    Itzam/Core 2.1.1 released
+
+    Fixed bug in management of deleted list
+
+    Added check for 64-bit datafile on 32-bit platforms
+
+8 November 2005
+    Itzam/Core 2.1.0 released
+
+    Entirely new scheme for handling deleted records. Instead of a linked
+    list, Itzam now uses a table. The table is *only* created if deletion
+    occurs on a given datafile.
+
+    Changed itzam_record_header.m_status to itzam_record_header.m_flags, from
+    an 8-bit value to a 32-bit bitmask.
+
+    Minor change to output of itzam_exercise
+
+    Simplified main loop of itzam_exercise
+
+    Fixed bugs in itzam_btree_insert_rec that resulted in excessively large files
+
+    Extended Itzam error condition to reflect improved error trapping
+
+    Improved error trapping in itzam_btree_remove
+
+    Fixed a few inconsistencies in using itzam_ref and itzam_int
+
+    Added new tests and datafile analyses
+
+    Fixed bug in itzam_datafile_rewind where it strated in the wrong place (duh)
+
+1 November 2005
+    Itzam/Core 2.0.0 released.
+
+    Compile-time support for generating version using 32-bit
+    file pointers (default is 64-bit pointers) by defining the
+    ITZAM32 symbol.
+
+    Embedded datafile version now includes number of bits in
+    a file reference.
+
+    Added functions to retrieve bits-per-reference and version.
+
+    Added Microsoft Visual Studio 2005 solution and project
+    files.
+
+    Changed fopen and sprintf function calls to reflect
+    Microsoft's obsession with "safety" in Visual C++ 14.0.
+
+    Fixed minor bug in itzam_datafile_rewrite.
+
+    Implemented a few minor "need better error handling" todos.
+
+    Minor optimizations and code clean-ups.
+
+    Minor changes to support C++ wrapper.
+
+9 October 2005
+    Itzam 1.2.0 released.
+
+    Added tutorial and API documentation.
+
+    Added Microsoft Visual Studio.NET 2003 solution and
+    projects.
+
+    Modified stress_btree.c for MS Visual C++.
+
+    Minor cruft removal.
+
+    Added tree structure analysis routines to debug facilities
+    and stress_btree test program.
+
+5 May 2005
+    Itzam 1.1.0 released.
+
+    Added iterator selectors, which returns true or false for
+    a key. Only "true" keys will be included in the iterator
+    list. This allows the creation of subsets or filters -- for
+    example all odd numbers, or all names beginning with "S".
+
+    Fixed bug in itzam_btree_iterator_move_prev that prevented
+    reverse traversal of an index iterator.
+
+    A few minor internal names were changed for consistency's
+    sake.
+
+    The stress_btree test application is better documented and
+    commented. Use the -help option to see what all it does.
+
+18 April 2005
+    Initial 1.0.0 release
+

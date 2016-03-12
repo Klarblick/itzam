@@ -1,0 +1,1289 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Itzam/C - A Concise Embedded Database Engine in Standard C</title>
+
+    <style type="text/css">
+        p {
+            font-family:   Trebuchet, Calibri, Arial, Helvetica, sans-serif;
+            font-weight:   normal;
+            font-style:    normal;
+            font-size:     100%;
+            line-height:   110%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   3.0em;
+            margin-right:  0em;
+            margin-top:    1.0em;
+            margin-bottom: 0em;
+            border-width:  0em;
+            color:         #000000
+        }
+
+        p i      { font-style: italic; }
+        p sub    { font-size: 60%; vertical-align: sub }
+        p sup    { font-size: 60%; vertical-align: super }
+        p em     { font-style: italic; }
+        p b      { font-weight: bold; }
+        p strong { font-weight: bold; }
+        p big    { font-size: 115%; }
+        p small  { font-size: 90%; }
+
+        code
+        {
+            font:          Andale Mono, Freemono, monospace;
+            font-size:     110%;
+            line-height:   100%;
+            color:         #8030FF;
+        }
+
+        pre
+        {
+            font-family:   monospace;
+            font-style:    bold;
+            font-size:     100%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   4.0em;
+            margin-right:  4.0em;
+            margin-top:    1.0em;
+            margin-bottom: 0.5em;
+            color:         #8030FF;
+            background:    #F0F0F0
+        }
+
+        h1
+        {
+            font-family:   Trebuchet, Calibri, Arial, Helvetica, sans-serif;
+            font-weight:   bold;
+            font-style:    normal;
+            font-size:     180%;
+            line-height:   125%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   0em;
+            margin-right:  0em;
+            margin-top:    2.0em;
+            margin-bottom: 0.0em;
+            border-width:  0em;
+            color:         #8030FF;
+        }
+
+        h2
+        {
+            font-family:   Trebuchet, Calibri, Arial, Helvetica, sans-serif;
+            font-weight:   normal;
+            font-style:    normal;
+            font-size:     130%;
+            line-height:   110%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   0em;
+            margin-right:  0em;
+            margin-top:    0.0em;
+            margin-bottom: 2.0em;
+            border-width:  0em;
+            color:         #8030FF;
+        }
+
+        h3
+        {
+            font-family:   Trebuchet, Calibri, Arial, Helvetica, sans-serif;
+            font-weight:   bold;
+            font-style:    italic;
+            font-size:     120%;
+            line-height:   100%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   1.5em;
+            margin-right:  0em;
+            margin-top:    1.0em;
+            margin-bottom: 1.0em;
+            border-width:  0em;
+            color:         #8030FF;
+        }
+
+        h4
+        {
+            font-family:   Trebuchet, Calibri, Arial, Helvetica, sans-serif;
+            font-weight:   bold;
+            font-style:    italic;
+            font-size:     125%;
+            text-indent:   0em;
+            text-align:    left;
+            margin-left:   0.2em;
+            margin-right:  0em;
+            margin-top:    1.0em;
+            margin-bottom: 0.5em;
+            color:         #8030FF;
+            background:    #E8D8FF;
+        }
+
+    </style>
+</head>
+
+<body>
+
+<!--#include virtual="/include/header.html" -->
+
+<h1>Itzam/C</h1>
+<h2>A Concise Embeddable Database Engine</i></h2>
+
+<p><small><i>This document is a work in progress. I tend to learn by looking at code, and strongly suggest that
+you study the examples in the distribution's <b>test</b> directory for working examples of Itzam code.
+Yet I know how important hard docs can be, so I'm open to suggestions for improving or updating this document.</i></small></p>
+
+<p>
+Itzam/C manages data storage using B-tree indexes,
+storing key-value pairs. Keys are identifiers of any fixed-length type for their associated value,
+and there is a one-to-one relationship between keys and values. Itzam/C supports
+transactions with rollback, multiple threads accessing the same database, and other features not
+usually found in small database engines.
+</p><p>
+In the real world, Itzam/C is the foundation of many business applications, including
+mission-critical systems running 24/365.
+</p><p>
+Itzam is not a SQL database, or something that can be accessed from ADO.
+You can build relational (or network, or...) database systems with Itzam as the
+underlying mechanic &mdash; but that really isn&apos;t what Itzam was meant for. The vast majority
+of applications do not need Oracle or SQL Server &mdash; they need a simple way to associate
+information with a key value, for retrieval. This is the niche Itzam occupies.
+</p>
+<h4>History</h4>
+<p>
+Itzam has a long and varied history. It began as example code in my first book, <i>C++
+Components and Algorithms</i> (1992). The original code was meant to teach C++, yet
+several people contacted me asking if they could use it in various projects. Some even
+offered to pay for the code.
+</p><p>
+And so I reworked the book code into something worthy of production code. After many
+versions (and a side-trip into Java under the name &quot;Jisp&quot;), I arrived at the Itzam you
+see today.
+</p><p>
+The current reference version is written in C for a variety of reasons. C produces
+small code and can be wrapped in various other programming languages. By writing in
+Standard C, I maintain portability. The current code has seen production and commercial
+use across PCs, cell phones, and Macs.
+</p><h4>
+Why &quot;Itzam&quot;?
+</h4><p>
+Naming projects is always difficult; I sometimes think every word in English has been
+appropriated by someone. So I've had to stretch my linguistic horizons. &quot;Itzam&quot;
+is one of several Mayan words for <i>iguana</i>; given the fondness of iguanas for trees,
+and the presence of an iguana in my house, the name seemed rather fitting.
+</p><p>
+The Itzam logo (and all other site art) was created by my eldest daughter Elora, using a
+combination of commercial and open source tools.
+</p><h4>
+License
+</h4><p>
+From version 5.1 forward, Itzam is licensed under the FreeBSD License (aka, the Simplified
+BSD License). It is as follows:
+</p>
+
+<pre>
+Redistribution and use in source and binary forms, with or without modification,
+are permitted provided that the following conditions are met:
+
+   1. Redistributions of source code must retain the
+      above copyright notice, this list of conditions
+      and the following disclaimer.
+
+   2. Redistributions in binary form must reproduce the
+      above copyright notice, this list of conditions and
+      the following disclaimer in the documentation and/or
+      other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY SCOTT ROBERT LADD ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+EVENT SHALL SCOTT ROBERT LADD OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the author alone, and should not be interpreted as representing the official
+policies, either expressed or implied, of anyoen other than Scott Robert Ladd.
+</pre>
+
+<p>
+Older versions were released under various incarnations of the GPL. I won&apos;t bore you with
+details of why I&apos;ve meandered through various Open Source/Free Software licenses; suffice
+it to say that the balkanization and politics of the Free Software movement have rubbed
+me very raw.
+</p><p>
+Individual and corporate licensing is available under a closed-source license; I also provide
+maintenance contracts and custom development. For such matters, please contact me at
+<a href="mailto:scott.ladd@coyotegulch.com"> scott.ladd@coyotegulch.com</a> or
+<a href="mailto:scott.ladd@gmail.com">scott.ladd@gmail.com</a>.
+</p>
+
+<h4>Basic Concepts and Structures</h4>
+<p>
+Most of the processes and concepts used in Itzam are the same as those used "under the
+hood" by more complex database systems. Itzam is a nuts-and-bolts approach to database
+development, providing great flexibility and customization at the expense of
+abstraction. You define how data is connected and associated; such control
+requires careful understanding of your data.
+</p>
+<p>
+Itzam associates key values with objects serialized in files, by creating one or more
+B-tree indexes to connect keys with objects. In many respects, Itzam is very object-oriented,
+with functions tied by name to target data structures in much the same way as a C++ program
+links methods to class objects.
+</p>
+<p>
+Everything you need is defined in the <code>itzam.h</code> header files. You'll find several data
+structures and internal definitions inside; you can safely ignore most of this, since you'll
+be working directly with only a few core types and structures.
+</p>
+<h3>itzam_ref (simple type)</h3>
+<p>
+  By default, an itzam_ref is the address (position) of information
+  inside an Itzam-defined database. By default, Itzam uses 32-bit file
+  pointers; defining the preprocessor macro ITZAM64 during compilation
+  will create an Itzam library that uses 64-bit file pointers. The
+  32-bit file operations handle files with sizes up to 2,147,483,648
+  bytes (some file systems may impose a lower limit); using 64-bit file
+  operations allows access to files up to 9 <em>quintillion</em>
+  bytes long.
+<br><br>
+  Using 64-bit file pointers will support the growing size of databases
+  and 64-bit CPUs. Handling 64-bit values imposes a slight performance
+  and has a significant affect on file size.
+<br><br>
+  In general, <code>itzam_int</code> is simply a synonym for <code>itzam_ref</code>,
+  reflecting different contexts. An <code>itzam_int</code> is a length or size,
+  while and <code>itzam_ref</code> is a file reference (position).
+</p>
+<h3>itzam_status (enum)</h3>
+<p>
+Most Itzam functions return a status code, which can be set to <code>ITZAM_OKAY</code>, <code>ITZAM_NOT_FOUND</code>, or
+any of the other constants found in <code>itzam.h</code>. Note that many functions will call an
+error handler function for serious errors; <code>itzam_status</code> is designed for programatic
+purpose (e.g., discovering that a key was not found), as opposed to error handling.
+</p>
+<h3>itzam_datafile (struct)</h3>
+<p>
+An <code>itzam_datafile</code> is a structured data file for storing fixed- or variable-length records;
+it automatically writes new records in space freed by deleted records. This class is useful without
+any of the indexing capabilities inherent in <code>itzam_btree</code>. In some applications, it may
+be practical to store data in individual <code>itzam_datafile</code>s, indexing
+it via one or more <code>itzam_btree</code>s.
+</p>
+<p>
+For the purposes of an <code>itzam_datafile</code>, consider "record" to be nothing more than
+a blob of binary data; the semantics of that "blob" is the province of your program. If you're
+talking to Itzam from Java, for example, you can serialize objects to and from byte streams
+stored in an <code>itzam_datafile</code>.
+</p>
+<p>
+To handle variable-length records, <code>itzam_datafile</code> records the
+size of each record. When a record is deleted, the space it occupied is marked as
+empty. The file maintains a linked list of deleted record locations and their sizes.
+</p>
+<p>
+Inserting a new record involves a traverse of the deleted list, looking for an empty
+record that is large enough to contain the new information. If the deleted list is
+empty, or the new record is too large to fit into any open slots, the new object
+record is appended to the file.
+</p>
+<p>
+Reusing deleted record space has a drawback: it leaves dead space in the file when
+a newly-inserted record is smaller than the "deleted" space it overwrites. Deleted
+records also use space in the file until a new record is written into their location.
+If your record sizes vary widely, it may make sense to periodically compact the file
+by removing the wasted space, eliminating deleted records, and regenerating indexes.
+If your records are fixed-length, the data file shouldn't contain much waste space.
+</p>
+<p>
+All functions that directly manipulate datafiles follow the naming pattern <code>itzam_datafile_*</code>.
+</p>
+<h3>itzam_btree (struct)</h3>
+<p>
+An <code>itzam_btree</code> organizes keys. A key is a fixed-length datum or data collection that
+will be sorted into an order, using a B-tree structure stored in an <code>itzam_datafile</code>.
+The order of the keys is determined by a user-defined comparison function. The actual content of
+the key is unrestricted, beyond the algorithmic requirement that it be fixed in length. A key
+could be a 32-bit numeric serial number and a 32- or 64-bit reference to the associated record.
+Or, for small records, the key could contain the entire data, with only "key" elements being
+used in the comparison fucntion for ordering and look-up purposes.
+</p>
+<p>
+All functions that directly manipulate B-tree indexes follow the naming pattern <code>itzam_btree_*</code>.
+</p>
+<h3>itzam_btree_cursor (struct)</h3>
+<p>
+An <code>itzam_btree_cursor</code> is a list of the records in a database, and can be traversed in key order.
+It does not store records; instead, it is a forward and backward traversable list of records in
+order (as defined by the database's key comparison function.)
+</p>
+<p>
+When you create an <code>itzam_btree_cursor</code>, it locks the mutex for the B-tree, preventing changes
+to that B-tree until the cursor is closed.
+</p>
+<p>
+In many ways, an <code>itzam_btree_cursor</code> can be used like a traditional database cursor.
+You can also treat it like a query, filtering records as you iterate through a list of records.
+</p>
+<p>
+All functions that directly manipulate B-tree cursors follow the naming pattern <code>itzam_btree_cursor_*</code>.
+</p>
+<h4>Example Code</h4>
+<p>
+Itzam/C includes several test and example programs, found in the <i>test</i> directory of the distribution.
+</p>
+<h3>itzam_btree_test_stress</h3>
+<p>
+This program performs a series of random inserts and removes from a B-tree index, verifying the
+validity of the database after each action, and using transactions with commits and recalls. It
+excercises almost every part of Itzam/C, and demonstrates how to use those features.
+</p>
+<h3>itzam_btree_insert</h3>
+<p>
+Created at the behest of several customers, to show how fast raw insertion is. This is simple a
+benchmark.
+</p>
+<h3>itzam_btree_test_threads</h3>
+<p>
+This program creates multiple threads that sumltaneously insert and rmeove records from the
+same B-tree index. Mutexes within Itzam/C control resource access, and shared memory
+improves performance.
+</p>
+<h3>itzam_btree_test_strvar</h3>
+<p>
+Here is an example of two oft-queried concepts: The use of variable-length string keys, and
+the storage of variable-length records. For a simple Itzam
+database of fixed-length records (as in the examples above), data can be embedded along with
+keys in the B-tree structure. For more complex data bases, the key can be linked to a reference
+to its asscoaited data -- in this case, an itzam_ref to a record stored independently with
+the B-tree file.
+</p><p>
+This example also illustrates a key feature of Itzam/C: B-tree files are
+also itzam_datafiles, <i>and</i> an itzam_btree index can reference data outside the B-tree
+&mdash; for example, a position in another fiel that could contain text, other binary data,
+or another itzam_datafile.
+</p><p>
+The B-tree cursor mechanism is also shown in this example.
+</p>
+
+<h4>Common Types and Structures</h4>
+
+<h3>itzam_ref</h3>
+<p>
+  By default, an <code>itzam_ref</code> is the address (position) of information
+  inside an Itzam-defined database. By default, Itzam uses 32-bit file
+  pointers; defining the preprocessor macro <code>ITZAM64</code> during compilation
+  will create an Itzam library that uses 64-bit file pointers. The
+  32-bit file operations handle files with sizes up to 2,147,483,648
+  bytes (some file systems may impose a lower limit); using 64-bit file
+  operations allows access to files up to 9,223,372,036,854,775,808
+  bytes long (again, limited by file system).
+<br><br>
+  Using 64-bit file pointers will support the growing size of databases
+  and 64-bit CPUs. Handling 64-bit values imposes a slight performance
+  and has a significant affect on file size.
+</p>
+<pre>
+  #if defined(ITZAM64)
+    typedef int64_t itzam_ref;
+  #else
+    typedef int32_t itzam_ref;
+  #endif
+</pre>
+
+<h3>itzam_int</h3>
+<p>
+  An <code>itzam_int</code> is the same type as <code>itzam_ref</code>, but used in a different
+  context. While an <code>itzam_ref</code> is a file pointer, and <code>itzam_int</code> is a
+  length, such as the size of a record.
+</p>
+<pre>
+  #if defined(ITZAM64)
+    typedef int64_t itzam_int;
+  #else
+    typedef int32_t itzam_int;
+  #endif
+</pre>
+
+<h3>itzam_bool</h3>
+<p>
+Yes, I know -- another damned boolean type. Here's the problem: different platforms support different <code>
+bool</code> implementations of differing sizes. Itzam relies on predictable datum sizes, thus it implements
+an explicit boolean type.
+</p>
+<pre>
+  typedef int16_t itzam_bool;
+  static const int16_t itzam_true  = -1;
+  static const int16_t itzam_false =  0;
+</pre>
+
+<h3>itzam_state</h3>
+<p>
+Most Itzam functions return a status code, which can be set to <code>ITZAM_OKAY</code>, <code>ITZAM_NOT_FOUND</code>, or
+any of the other constants found in <code>itzam.h</code>. Note that many functions will call an
+error handler function for serious errors; <code>itzam_state</code> is designed for programatic
+purpose (e.g., discovering that a key was not found), as opposed to error handling.
+</p>
+<pre>
+typedef enum
+{
+    ITZAM_OKAY,
+    ITZAM_AT_END,
+    ITZAM_AT_BEGIN,
+    ITZAM_UNKNOWN,
+    ITZAM_NOT_FOUND,
+    ITZAM_DUPLICATE,
+    ITZAM_32BIT_OVERFLOW
+} itzam_state;
+</pre>
+
+<h3>itzam_error</h3>
+<p>
+When Itzam encounters a serious probled, it calls the error handler defined for a given
+<code>itzam_datafile</code>. This enumeration identifies the problem.
+</p>
+<pre>
+typedef enum
+{
+    ITZAM_ERROR_SIGNATURE,
+    ITZAM_ERROR_VERSION,
+    ITZAM_ERROR_WRITE_FAILED,
+    ITZAM_ERROR_OPEN_FAILED,
+    ITZAM_ERROR_READ_FAILED,
+    ITZAM_ERROR_CLOSE_FAILED,
+    ITZAM_ERROR_SEEK_FAILED,
+    ITZAM_ERROR_TELL_FAILED,
+    ITZAM_ERROR_DUPE_REMOVE,
+    ITZAM_ERROR_FLUSH_FAILED,
+    ITZAM_ERROR_TOO_SMALL,
+    ITZAM_ERROR_NULL_ALLOC,
+    ITZAM_ERROR_PAGE_NOT_FOUND,
+    ITZAM_ERROR_LOST_KEY,
+    ITZAM_ERROR_KEY_NOT_WRITTEN,
+    ITZAM_ERROR_KEY_SEEK_FAILED,
+    ITZAM_ERROR_ITERATOR_COUNT
+} itzam_error;
+</pre>
+
+<h3>itzam_error handler</h3>
+<p>
+This type defines the signature of an error handling function.
+</p>
+<pre>
+typedef void itzam_error_handler(const char * function_name, itzam_error error);
+</pre>
+
+<h4>Common Functions</h4>
+
+<h3>itzam_set_default_error_handler</h3>
+<p>
+Sets the default error handler. When Itzam creates a new datafile, it assigns the
+default handler to the datafile object. You can change the default handler with
+this function, or set datafile-specific error handlers with
+<code>itzam_datafile_set_error_handler</code>. The default error handler displays
+a message to <code>stderr</code> and causes program termination.
+</p>
+<pre>
+void itzam_set_default_error_handler(itzam_error_handler * error_handler);
+</pre>
+<p><b>Parameters</b><br>
+<code>error_handler</code> - Address of user-defined error handler
+</p>
+<p><b>Return Value</b><br>
+None
+</p>
+
+<h3>itzam_get_default_error_handler</h3>
+<p>
+Returns the address of the current default error handler.
+</p>
+<pre>
+itzam_error_handler * itzam_get_default_error_handler();
+</pre>
+<p><b>Parameters</b><br>
+None
+</p>
+<p><b>Return Value</b><br>
+The address of the current default error handler.
+</p>
+
+<h4>Datafiles</h4>
+
+<p>
+An <code>itzam_datafile</code> is a structured data file for storing fixed- or variable-length records;
+it automatically writes new records in space freed by deleted records. This class is useful without
+any of the indexing capabilities inherent in <code>itzam_btree</code>. In some applications, it may
+be practical to store data in individual <code>itzam_datafile</code>s, indexing
+it via one or more <code>itzam_btree</code>s.
+</p>
+<p>
+For the purposes of an <code>itzam_datafile</code>, consider "record" to be nothing more than
+a blob of binary data; the semantics of that "blob" is the province of your program. If you're
+talking to Itzam from Java, for example, you can serialize objects to and from byte streams
+stored in an <code>itzam_datafile</code>.
+</p>
+<p>
+To handle variable-length records, <code>itzam_datafile</code> records the
+size of each record. When a record is deleted, the space it occupied is marked as
+empty. The file maintains a linked list of deleted record locations and their sizes.
+</p>
+<p>
+Inserting a new record involves a traverse of the deleted list, looking for an empty
+record that is large enough to contain the new information. If the deleted list is
+empty, or the new record is too large to fit into any open slots, the new object
+record is appended to the file.
+</p>
+<p>
+Reusing deleted record space has a drawback: it leaves dead space in the file when
+a newly-inserted record is smaller than the "deleted" space it overwrites. Deleted
+records also use space in the file until a new record is written into their location.
+If your record sizes vary widely, it may make sense to periodically compact the file
+by removing the wasted space, eliminating deleted records, and regenerating indexes.
+If your records are fixed-length, the data file shouldn't contain much waste space.
+</p>
+<p>
+All functions that directly manipulate datafiles follow the naming pattern <code>itzam_datafile_*</code>.
+</p>
+
+<h4>Datafile Types and Structures</h4>
+
+<h3>itzam_datafile</h3>
+<p>
+This structure encapsulates the elements used internally by Itzam to manipulate a datafile.
+</p>
+<pre>
+typedef struct
+{
+  // you can safely ignore the members
+}
+itzam_datafile;
+</pre>
+
+<h4>Datafile Functions</h4>
+
+<h3>
+
+</h3>
+<p>
+
+</p>
+<pre>
+
+</pre>
+<p><b>Parameters</b><br>
+<code></code> - <br>
+<code></code> - <br>
+</p>
+<p><b>Return Value</b><br>
+<code></code> <br>
+<code></code>
+</p>
+
+<h3>itzam_datafile_create</h3>
+<p>
+Creates a new, empty data file. This function will automatically delete any file named
+<code>filename</code>.
+</p>
+<pre>
+itzam_state itzam_datafile_create(itzam_datafile * datafile,
+                                  const char * filename);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br><br>
+<code>filename</code> - the platform-specific name of the new file
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_open</h3>
+<p>
+Opens an existing datafile. The file may be open read-only.
+</p>
+<pre>
+itzam_state itzam_datafile_open(itzam_datafile * datafile,
+                                const char * filename,
+                                bool read_only,
+                                bool recover);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>filename</code> - platform-specific name of the file to be opened<br>
+<code>read_only</code> - determines if the file is opened read-only (writes disallowed)
+<code>recover</code> - if true, the database will rollback any unfinished transactions; if false, the old journal file will simply be removed
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_state itzam_datafile_close</h3>
+<p>
+Closes an open data file. This flushes any remaining data to external storage.
+</p>
+<pre>
+itzam_state itzam_datafile_close(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_set_error_handler</h3>
+<p>
+Sets an error handling function specific to a given datafile. If this function is not used,
+Itzam supplies a default error function, printing an error message to <code>stderr</code> and calling
+<code>exit(1)</code>.
+</p>
+<pre>
+void itzam_datafile_set_error_handler(itzam_datafile * datafile,
+                                      itzam_error_handler * error_handler);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>error_handler</code> - the address of an error handler function
+</p>
+<p><b>Return Value</b><br>
+None
+</p>
+
+<h3>
+itzam_datafile_mutex_lock
+</h3>
+<p>
+Lock the mutex associated with this datafile, preventing other threads from altering the
+datafile's resources until an unlock is performed. Several datafile functions lock and unlock
+the mutex internally, as needed for resource contention control. As such, it should not
+usually be necessary to call this function explicitly.
+</p>
+<pre>
+void itzam_datafile_mutex_lock(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+
+<h3>
+itzam_datafile_mutex_unlock
+</h3>
+<p>
+Unlock the mutex associated with this datafile, allowing other threads access to the
+datafile's resources. Several datafile functions lock and unlock
+the mutex internally, as needed for resource contention control. As such, it should not
+usually be necessary to call this function explicitly.
+</p>
+<pre>
+void itzam_datafile_mutex_unlock(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+
+<h3>itzam_datafile_tell</h3>
+<p>
+Retrieves the file pointer for a given datafile.
+</p>
+<pre>
+itzam_ref itzam_datafile_tell(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+The position of the file pointer in <code>datafile</code>.
+</p>
+
+<h3>itzam_datafile_seek</h3>
+<p>
+Sets the file pointer for a given datafile.
+</p>
+<pre>
+itzam_state itzam_datafile_seek(itzam_datafile * datafile,
+                                itzam_ref pos);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>pos</code> - The new position, as calculated from the beginning of the file
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_rewind</h3>
+<p>
+Sets the file pointer to the beginning of the first active (not deleted) record in a datafile.
+</p>
+<pre>
+itzam_state itzam_datafile_rewind(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_get_next_open</h3>
+<p>
+Finds a file pointer that can be used to write a record of <code>length</code>
+bytes. This will either be a deleted record of at least <code>length</code> bytes,
+or the end of the datafile. <i> This fucntion is generally used internally, and should
+be used with caution.</i>
+</p>
+<pre>
+itzam_ref itzam_datafile_get_next_open(itzam_datafile * datafile,
+                                       itzam_int length);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>length</code> - the required number of bytes
+</p>
+<p><b>Return Value</b><br>
+The file pointer of the first empty record than can hold <code>length</code> bytes,
+or <code>ITZAM_NULL_POS</code> if an error occurred.
+</p>
+
+<h3>itzam_datafile_write</h3>
+<p>
+Writes a record to the datafile at the current file position. The record will be stored
+in the first deleted record with adequate space, or it will be written to the end of
+the file if no adequate deleted record is available.
+</p>
+<pre>
+itzam_ref itzam_datafile_write(itzam_datafile * datafile,
+                               const void * data,
+                               itzam_int length);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>data</code> - a pointer to the record being written<br>
+<code>length</code> - the number of bytes pointed to by data
+</p>
+<p><b>Return Value</b><br>
+The file pointer to the beginning of the newly-written record, or
+<code>ITZAM_NULL_POS</code> if an error occurred.
+</p>
+
+<h3>itzam_datafile_overwrite</h3>
+<p>
+Overwrite a portion of a record at a gievn offset. The <code>where</code> must point to the
+beginning of a valid record, and the <code>offset</code> + <code>length</code> must not
+exceed the record's boundaries. This function should be used with caution.</p>
+<pre>
+itzam_ref itzam_datafile_overwrite(itzam_datafile * datafile,
+                                   const void * data,
+                                   itzam_int length,
+                                   itzam_ref where,
+                                   itzam_int offset);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>data</code> - a pointer to the record being written<br>
+<code>length</code> - the number of bytes pointed to by data<br>
+<code>where</code> - start of header for record being modified<br>
+<code>offset</code> - offset in bytes from the beginning of record data where writing should take place
+</p>
+<p><b>Return Value</b><br>
+<codce>ITZAM_TOO_LONG</code> if the overwrite would exceed the record boundaries<br>
+<code>ITZAM_OKAY</code> on success
+</p>
+
+<h3>itzam_datafile_read</h3>
+<p>
+Reads the record at the current file pointer in the given data file. This function assumes
+that the file pointer is at the beginning of a valid record.
+</p>
+<pre>
+itzam_state itzam_datafile_read(itzam_datafile * datafile,
+                                void * data,
+                                itzam_int max_length);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>data</code> - a pointer to a buffer to contain the read record<br>
+<code>length</code> - the maximum number of bytes that can be written to <code>data</code>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_read_alloc</h3>
+<p>
+Reads the record at the current file pointer in the given data file. This function assumes
+that the file pointer is at the beginning of a valid record. Where <code>itzam_datafile_read</code>
+requires a pointer to preallocated space, <code>itzam_datafile_read_alloc</code> dynamically
+allocates record space based on information stored in the record header. The caller is
+responsible for freeing the memory allocated to <code>data</code>.
+</p>
+<pre>
+itzam_state itzam_datafile_read_alloc(itzam_datafile * datafile,
+                                      void ** data,
+                                      itzam_ref * length);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+<code>data</code> - a pointer to a pointer that references the allocated record buffer<br>
+<code>length</code> - the number of bytes allocated to <code>data</code>
+<code></code> -
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_remove</h3>
+<p>
+Deletes the record at the current file pointer in the given data file. This function assumes
+that the file pointer is at the beginning of a valid record.</p>
+<pre>
+itzam_state itzam_datafile_remove(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_commit</h3>
+<p>
+Forces the datafile to write all data pending in cache to memory.
+</p>
+<pre>
+itzam_state itzam_datafile_commit(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_file_lock</h3>
+<p>
+Exclusively locks a datafile using OS-level file locking, preventing other processes or threads
+from making changes.
+</p>
+<pre>
+itzam_bool itzam_datafile_lock(itzam_datafile * datafile, bool read_only);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>itzam_true</code> if the function succeeded<br>
+<code>itzam_fale</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_file_unlock</h3>
+<p>
+Removes an existing OS-level lock from the file.
+</p>
+<pre>
+itzam_bool itzam_datafile_unlock(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>itzam_true</code> if the function succeeded<br>
+<code>itzam_false</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_transaction_start</h3>
+<p>
+Begins a new transaction and locks the file. Until a commit or reollback is performed, all changes to the
+datafile file are recorded in an external journal file.
+</p>
+<pre>
+itzam_state itzam_datafile_transaction_start(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_transaction_commit</h3>
+<p>
+Commits the current transaction, which makes all changes permanent.
+The temporary journal file is removed, and the file unlocked.
+</p>
+<pre>
+itzam_state itzam_datafile_transaction_commit(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_datafile_transaction_rollback</h3>
+<p>
+The current transaction is "rolled back", meaning that all changes to the file will be "undone".
+The temporary journal file is removed, and the file unlocked.
+</p>
+<pre>
+itzam_state itzam_datafile_transaction_rollback(itzam_datafile * datafile);
+</pre>
+<p><b>Parameters</b><br>
+<code>datafile</code> - a pointer to the target <code>itzam_datafile</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h4>B-trees</h4>
+
+<p>
+The B-tree data structure maintains a list of keys in order, as determined by a user-supplied
+key comparison function. You determine the sort order via the comparison function supplied when
+opening or creating an <code>itzam_btree</code>. Just be certain that you always <i>use the same
+comparison function whenever making changes to the index.</i>
+</p>
+<p>
+All keys must be unique in a B-tree index.
+</p>
+<p>
+<a href="about_keys.html">More about keys</a>
+</p>
+<p>
+Functions that directly manipulate B-tree indexes follow the naming pattern <code>itzam_btree_*</code>.
+</p>
+
+<h4>B-tree Types and Structures</h4>
+
+<h3>itzam_btree</h3>
+<p>
+For the most part, you won't directly access the members of an <code>itzam_btree</code> structure.
+However, it is possible (and often quite desirable) to store non-index data in the same datafile
+used by an index. The example program does this very thing, combining contact records with the
+name-based B-tree index.
+</p>
+<pre>
+typedef struct
+{
+    itzam_datafile * m_datafile;       // file associated with this B-tree file
+
+    // The rest is internal stuff
+}
+itzam_btree;
+</pre>
+
+<h3>itzam_key_comparator</h3>
+<p>
+A B-tree index uses a comparator to determine the relative order of two keys. The user defines and supplies
+a comparator function pointer when opening or creating an index; the function's signature must match this type definition.
+</p>
+<pre>
+typedef int itzam_key_comparator(const void * key1, const void * key2);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>filename</code> - the platform-specific name of the file to be created<br>
+<code>key_comparator</code> - a function that compares two index keys
+</p>
+<p><b>Return Value</b><br>
+<code>&lt; 0</code>, if <code>key1</code> is before <code>key2</code><br>
+<code>= 0</code>, if <code>key1</code> equals <code>key2</code><br>
+<code>&gt; 0</code>, if <code>key1</code> is after <code>key2</code>
+</p>
+
+<h4>B-tree Functions</h4>
+
+<h3>itzam_btree_create</h3>
+<p>
+Creates a new B-tree index by creating a data file with a specific internal structure. Keys
+will be ordered based on comparisons performed via the called-supplied
+<code>key_comparator</code> function.
+</p>
+<pre>
+itzam_state itzam_btree_create(itzam_btree * B-tree,
+                               const char * filename,
+                               uint16_t order,
+                               itzam_int key_size,
+                               itzam_key_comparator * key_comparator,
+                               itzam_error_handler * error_handler);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>filename</code> - the platform-specific name of the file to be created<br>
+<code>key_size</code> - the number of bytes in key objects; all keys must be of this exact size<br>
+<code>order</code> - the number of keys held in each B-tree page; the predefined constant
+<code>ITZAM_BTREE_ORDER_DEFAULT</code> works well for most indexes<br>
+<code>key_comparator</code> - a function that compares two index keys
+<code>error_handler</code> - the function to be called when a fatal error occurs in Itzam
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_open</h3>
+<p>
+Opens an existing B-tree index file. The <code>key_comparator</code> function must
+produce the same results as the comparison functions used in previous manipulations
+of the index. In other words, always use the same <code>key_comparator</code>
+function for a given index.
+</p>
+<pre>
+itzam_state itzam_btree_open(itzam_btree * B-tree,
+                             const char * filename,
+                             itzam_key_comparator * key_comparator,
+                             itzam_error_handler * error_handler,
+                             itzam_bool recover,
+                             itzam_bool read_only);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>filename</code> - the platform-specific name of the file to be opened<br>
+in a faster the index and a bigger the datafile<br>
+<code>key_comparator</code> - a function that compares two index keys<br>
+<code>read_only</code> - if true, the file will be opened read-only (no writes allowed);
+this is handled internally to ITzam, and only prevents this specific itzam_btree from
+performing inserts and removes.<br>
+<code>recover</code> - if true, any unfinished transactions will be rolled back; if false, existing
+transaction files are simply deleted
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_close</h3>
+<p>
+Closes an open B-tree file and flushes any remaining file operations.
+</p>
+<pre>
+itzam_state itzam_btree_close(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>
+itzam_btree_mutex_lock
+</h3>
+<p>
+Lock the mutex associated with this B-tree, preventing other threads from altering the
+B-tree's resources until an unlock is performed. Several B-tree functions lock and unlock
+the mutex internally, as needed for resource contention control. As such, it should not
+usually be necessary to call this function explicitly.<br><br>
+This function is a convenience; it simply calls the <code>itzam_datafile_mutex_lock</code>
+fucntion for the datafile underlying the B-tree.
+</p>
+<pre>
+void itzam_btree_mutex_lock(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+</p>
+
+<h3>
+itzam_btree_mutex_unlock
+</h3>
+<p>
+Unlock the mutex associated with this B-tree, allowing other threads access to the
+B-tree's resources. Several B-tree functions lock and unlock
+the mutex internally, as needed for resource contention control. As such, it should not
+usually be necessary to call this function explicitly.<br><br>
+This function is a convenience; it simply calls the <code>itzam_datafile_mutex_unlock</code>
+fucntion for the datafile underlying the B-tree.
+</p>
+<pre>
+void itzam_btree_mutex_unlock(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+</p>
+
+<h3>itzam_btree_count</h3>
+<p>
+Returns the number of active keys stored in the B-tree.
+</p>
+<pre>
+uint64_t itzam_btree_count(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+The number of active keys in the B-tree.
+</p>
+
+<h3>itzam_btree_ticker</h3>
+<p>
+Returns a count of the number of times a key has been added to the B-tree.
+</p>
+<pre>
+uint64_t itzam_btree_ticker(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+The number of times a key has been added to the B-tree.
+</p>
+
+<h3>itzam_btree_insert</h3>
+<p>
+Adds a new record reference to the index, with a given key. The index does not place any
+semantics on the value of <code>reference</code>; it is merely stored in association with
+<code>key</code>. The <code>reference</code> can be a file pointer in <code>B-tree->m_datafile</code>
+or a file position in another datafile, or any other 64-bit value of the caller's choosing.
+</p>
+<pre>
+itzam_state itzam_btree_insert(itzam_btree * B-tree,
+                               const void * key);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>key</code> - a pointer to the key data that identify the record reference<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_find</h3>
+<p>
+Finds the record reference associated with a given key.
+</p>
+<pre>
+itzam_ref itzam_btree_find(itzam_btree * B-tree,
+                           const void * search_key
+                           void * result);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>search_key</code> - a pointer to the key data that identifies the record
+<code>result</code> - a pointer to key data that will be updated with the contents found by searchign for <code>search_key</code>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_remove</h3>
+<p>
+Removes the first key found that is associated with the given <code>key</code>.
+If <code>ref</code> is NULL, the function also attempts to remove the associated
+record from the <code>B-tree->m_datafile</code>. If <code>ref</code> is not NULL,
+this function returns the record reference associated with the deleted key.
+</p>
+<pre>
+itzam_state itzam_btree_remove(itzam_btree * B-tree,
+                               const void * key);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+<code>key</code> - a pointer to the key data that identifies the record<br>
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_file_lock</h3>
+<p>
+A simple wrapper for <code>itzam_datafile_file_lock</code>.
+</p>
+<pre>
+itzam_bool itzam_btree_lock(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure<br>
+</p>
+<p><b>Return Value</b><br>
+<code>itzam_true</code> if the function succeeded<br>
+<code>itzam_false</code> the function failed; <code>B-tree</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_file_unlock</h3>
+<p>
+A simple wrapper for <code>itzam_datafile_file_unlock</code>.
+</p>
+<pre>
+itzam_bool itzam_btree_unlock(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>itzam_true</code> if the function succeeded<br>
+<code>itzam_false</code> the function failed; <code>B-tree</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_transaction_start</h3>
+<p>
+Begins a new transaction and locks the file. Until a commit or reollback is performed, all changes to the
+B-tree file are recorded in an external journal file.
+</p>
+<pre>
+itzam_state itzam_btree_transaction_start(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_transaction_commit</h3>
+<p>
+Commits the current transaction, which makes all changes permanent.
+The temporary journal file is removed, and the file unlocked.
+</p>
+<pre>
+itzam_state itzam_btree_transaction_commit(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+<h3>itzam_btree_transaction_rollback</h3>
+<p>
+The current transaction is "rolled back", meaning that all changes to the file will be "undone".
+The temporary journal file is removed, and the file unlocked.
+</p>
+<pre>
+itzam_state itzam_btree_transaction_rollback(itzam_btree * B-tree);
+</pre>
+<p><b>Parameters</b><br>
+<code>B-tree</code> - a pointer to the target <code>itzam_btree</code> structure
+</p>
+<p><b>Return Value</b><br>
+<code>ITZAM_OKAY</code> if the function succeeded<br>
+<code>ITZAM_UNKNOWN</code> the function failed; <code>datafile</code> is in an unknown state
+</p>
+
+</body>
+</html>

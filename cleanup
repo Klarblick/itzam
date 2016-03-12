@@ -1,0 +1,18 @@
+#!/bin/sh
+#
+#-- remove old configuration files
+#
+rm -f depcomp missing install-sh mkinstalldirs libtool acconfig.h
+rm -f configure Makefile.in config.status config.log config.guess config.cache 
+rm -f aclocal.m4 ltmain.sh config.sub
+rm -rf m4 autom4te.cache Makefile Makefile.in *.lo *~ deleteme.*
+rm -f src/*.o test/*.o src/*.lo test/*.lo src/*.la test/*.la 
+rm -f src/Makefile.in src/Makefile test/Makefile.in test/Makefile
+rm -f test/itzam_btree_test_befaft
+rm -f test/itzam_btree_test_cursor
+rm -f test/itzam_btree_test_insert
+rm -f test/itzam_btree_test_strvar
+rm -f test/itzam_btree_test_stress
+rm -f test/itzam_btree_test_threads
+#
+#-- end

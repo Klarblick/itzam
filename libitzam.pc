@@ -1,0 +1,11 @@
+prefix=/usr/local
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: libitzam
+Description: A concise embedded database engine in C, by Scott Robert Ladd
+Version: 6.0.5
+Libs: -L${libdir} -llibitzam
+Cflags: -I${includedir}/libitzam -I${libdir}/libitzam/include
+
