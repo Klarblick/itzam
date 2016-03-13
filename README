@@ -1,5 +1,5 @@
 Itzam/C
-A Concise Embeddable Database Engine
+A Concise Embeddable Database Engine in Standard C
 
 This document is a work in progress. I tend to learn by looking at code, and strongly suggest that you study the examples in the distribution's test directory for working examples of Itzam code. Yet I know how important hard docs can be, so I'm open to suggestions for improving or updating this document.
 
@@ -9,6 +9,7 @@ In the real world, Itzam/C is the foundation of many business applications, incl
 
 Currently, Itzam is a C99 64-bit only engine enabled for threaded applications. 
 I will be updating this for the latest C standard.
+I may be removing Windows support in the future, as it clutters the code.
 
 Itzam is not a SQL database, or something that can be accessed from ADO. You can build relational (or network, or...) database systems with Itzam as the underlying mechanic — but that really isn't what Itzam was meant for. The vast majority of applications do not need Oracle or SQL Server — they need a simple way to associate information with a key value, for retrieval. This is the niche Itzam occupies.
 
