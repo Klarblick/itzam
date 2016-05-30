@@ -23,27 +23,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-void not_okay(itzam_state state)
-{
+void not_okay(itzam_state state) {
     fprintf(stderr, "\nItzam problem: %s\n", STATE_MESSAGES[state]);
     exit(EXIT_FAILURE);
 }
 
-void error_handler(const char * function_name, itzam_error error)
-{
+void error_handler(const char * function_name, itzam_error error) {
     fprintf(stderr, "Itzam error in %s: %s\n", function_name, ERROR_STRINGS[error]);
     exit(EXIT_FAILURE);
 }
 
-/*----------------------------------------------------------
- * tests
- */
-
 #define REC_SIZE 10
 #define TEST_SIZE 10
 
-itzam_bool test_btree_overwrite()
-{
+bool test_btree_overwrite() {
     itzam_datafile  datafile;
     itzam_state     state;
 
@@ -57,17 +50,15 @@ itzam_bool test_btree_overwrite()
 
     state = itzam_datafile_create(&datafile, filename);
 
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         not_okay(state);
-        return itzam_false;
+        return false;
     }
 
     itzam_datafile_set_error_handler(&datafile, error_handler);
 
     // fill datafile
-    for (n = 0; n < TEST_SIZE; ++n)
-    {
+    for (n = 0; n < TEST_SIZE; ++n) {
         record = (char *)malloc(REC_SIZE + 1);
 
         for (i = 0; i < REC_SIZE; ++i)
@@ -84,8 +75,7 @@ itzam_bool test_btree_overwrite()
     printf("\nInitial DB contents:\n");
     itzam_int len;
 
-    for (n = 0; n < TEST_SIZE; ++n)
-    {
+    for (n = 0; n < TEST_SIZE; ++n) {
         itzam_datafile_seek(&datafile, w[n]);
         itzam_datafile_read_alloc(&datafile, (void **)&record, &len);
         printf("    %s @ %d\n", record, (int)w[n]);
@@ -100,10 +90,9 @@ itzam_bool test_btree_overwrite()
     // modify a few records what's in the DB
     state = itzam_datafile_overwrite(&datafile, (void *)change, 3, w[4], 9);
 
-    if (state != ITZAM_OVERWRITE_TOO_LONG)
-    {
+    if (state != ITZAM_OVERWRITE_TOO_LONG) {
         printf("Error: Overwrite beyond end of record should have failed.\n");
-        return itzam_false;
+        return false;
     }
 
     // modify a few records what's in the DB
@@ -116,8 +105,7 @@ itzam_bool test_btree_overwrite()
     // display what's in the DB
     printf("\nAfter overwrites, DB contents:\n");
 
-    for (n = 0; n < TEST_SIZE; ++n)
-    {
+    for (n = 0; n < TEST_SIZE; ++n) {
         itzam_datafile_seek(&datafile, w[n]);
         itzam_datafile_read_alloc(&datafile, (void **)&record, &len);
         printf("    %s @ %d\n", record, (int)w[n]);
@@ -138,17 +126,15 @@ itzam_bool test_btree_overwrite()
     // close
     state = itzam_datafile_close(&datafile);
 
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         not_okay(state);
-        return itzam_false;
+        return false;
     }
 
-    return itzam_true;
+    return true;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     int result = EXIT_FAILURE;
 
     itzam_set_default_error_handler(error_handler);
@@ -158,4 +144,3 @@ int main(int argc, char* argv[])
 
     return result;
 }
-

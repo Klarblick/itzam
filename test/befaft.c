@@ -23,18 +23,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/*----------------------------------------------------------
- * embedded random number generator; ala Park and Miller
- */
+//-- embedded random number generator; ala Park and Miller
+
 static int32_t seed = 1325;
 
-void init_test_prng(int32_t s)
-{
+void init_test_prng(int32_t s) {
     seed = s;
 }
 
-int32_t random_int32(int32_t limit)
-{
+int32_t random_int32(int32_t limit) {
     static const int32_t IA   = 16807;
     static const int32_t IM   = 2147483647;
     static const int32_t IQ   = 127773;
@@ -57,9 +54,8 @@ int32_t random_int32(int32_t limit)
     return result;
 }
 
-/*----------------------------------------------------------
- *  Reports an itzam error
- */
+//-- error handling
+
 void not_okay(itzam_state state)
 {
     fprintf(stderr, "\nItzam problem: %s\n", STATE_MESSAGES[state]);
@@ -72,13 +68,10 @@ void error_handler(const char * function_name, itzam_error error)
     exit(EXIT_FAILURE);
 }
 
-/*----------------------------------------------------------
- * tests
- */
+//-- tests
 
-itzam_bool test_btree_befaft()
-{
-    itzam_bool result = false, bsuccess = false, asuccess = false;
+bool test_btree_befaft() {
+    bool result = false, bsuccess = false, asuccess = false;
     int n;
     const uint16_t order = 5; // small, so we get lots of tree changes
     time_t start;
@@ -93,15 +86,9 @@ itzam_bool test_btree_befaft()
     printf("\nTesting Itzam/C b-tree indexes with new \"nearby\" search functions\n");
     
     // create an empty database file
-    state = itzam_btree_create(&btree,
-                               filename,
-                               order,
-                               sizeof(int32_t),
-                               itzam_comparator_int32,
-                               error_handler);
+    state = itzam_btree_create(&btree, filename, order, sizeof(int32_t), itzam_comparator_int32, error_handler);
     
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         printf("uable to create index file\n");
         return false;
     }
@@ -110,22 +97,19 @@ itzam_bool test_btree_befaft()
     int32_t largest = -1;
     int32_t x = -1;
     
-    for (int n = 0; n < 100; ++n)
-    {
+    for (int n = 0; n < 100; ++n) {
         x += random_int32(3) + 1;
         largest = x;
         
         state = itzam_btree_insert(&btree, &x);
         
-        if (state != ITZAM_OKAY)
-        {
+        if (state != ITZAM_OKAY) {
             printf("could not add %d to index file\n",n);
             return false;
         }
     }
     
-    for (int n = -1; n < largest + 1; ++n)
-    {
+    for (int n = -1; n < largest + 1; ++n) {
         before = -1;
         after = -1;
         
@@ -140,13 +124,13 @@ itzam_bool test_btree_befaft()
     }
     
     // done
-    return itzam_true;
+    return true;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     int result = EXIT_FAILURE;
 
+    init_test_prng((int32_t)time(NULL));
     itzam_set_default_error_handler(error_handler);
 
     if (test_btree_befaft())

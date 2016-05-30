@@ -23,18 +23,15 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/*----------------------------------------------------------
- * embedded random number generator; ala Park and Miller
- */
+//-- embedded random number generator; ala Park and Miller
+
 static int32_t seed = 1325;
 
-void init_test_prng(int32_t s)
-{
+void init_test_prng(int32_t s) {
     seed = s;
 }
 
-int32_t random_int32(int32_t limit)
-{
+int32_t random_int32(int32_t limit) {
     static const int32_t IA   = 16807;
     static const int32_t IM   = 2147483647;
     static const int32_t IQ   = 127773;
@@ -57,28 +54,22 @@ int32_t random_int32(int32_t limit)
     return result;
 }
 
-/*----------------------------------------------------------
- *  Reports an itzam error
- */
-void not_okay(itzam_state state)
-{
+//-- error handling
+
+void not_okay(itzam_state state) {
     fprintf(stderr, "\nItzam problem: %s\n", STATE_MESSAGES[state]);
     exit(EXIT_FAILURE);
 }
 
-void error_handler(const char * function_name, itzam_error error)
-{
+void error_handler(const char * function_name, itzam_error error) {
     fprintf(stderr, "Itzam error in %s: %s\n", function_name, ERROR_STRINGS[error]);
     exit(EXIT_FAILURE);
 }
 
-/*----------------------------------------------------------
- * tests
- */
+//-- tests
 
-itzam_bool test_btree_cursor(int testn)
-{
-    itzam_bool result = false, bsuccess = false, asuccess = false;
+bool test_btree_cursor(int testn) {
+    bool result = false, bsuccess = false, asuccess = false;
     int n;
     const uint16_t order = 5; // small, so we get lots of tree changes
     time_t start;
@@ -92,19 +83,10 @@ itzam_bool test_btree_cursor(int testn)
     if (testn < 0)
         testn = 50;
     
-    // banner for this test
-    // printf("\nTesting Itzam/C b-tree indexes with new \"nearby\" search functions\n");
-    
     // create an empty database file
-    state = itzam_btree_create(&btree,
-                               filename,
-                               order,
-                               sizeof(int32_t),
-                               itzam_comparator_int32,
-                               error_handler);
+    state = itzam_btree_create(&btree, filename, order, sizeof(int32_t), itzam_comparator_int32, error_handler);
     
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         printf("uable to create index file\n");
         return false;
     }
@@ -113,15 +95,13 @@ itzam_bool test_btree_cursor(int testn)
     int32_t largest = -1;
     int32_t x = -1;
     
-    for (int n = 0; n < testn; ++n)
-    {
+    for (int n = 0; n < testn; ++n) {
         x += random_int32(3) + 1;
         largest = x;
         
         state = itzam_btree_insert(&btree, &x);
         
-        if (state != ITZAM_OKAY)
-        {
+        if (state != ITZAM_OKAY) {
             printf("could not add %d to index file\n",n);
             return false;
         }
@@ -135,19 +115,16 @@ itzam_bool test_btree_cursor(int testn)
     // forward tests
     printf("\nforward tests\n");
 
-    for (int target = 0; target < largest + 1; ++ target)
-    {
+    for (int target = 0; target < largest + 1; ++ target) {
         printf ("t = %3d: ", target);
         
         itzam_btree_cursor_create_at(&cursor, &btree, &target, false);
         
-        do
-        {
+        do  {
             // get the key pointed to by the cursor
             state = itzam_btree_cursor_read(&cursor,(void *)&rec);
             
-            if (state == ITZAM_OKAY)
-            {
+            if (state == ITZAM_OKAY) {
                 printf("%d, ",rec);
                 fflush(stdout);
             }
@@ -164,19 +141,16 @@ itzam_bool test_btree_cursor(int testn)
     // backward tests
     printf("\nbackward tests\n");
 
-    for (int target = 0; target < largest + 1; ++target)
-    {
+    for (int target = 0; target < largest + 1; ++target) {
         printf ("t = %3d: ", target);
         
         itzam_btree_cursor_create_at(&cursor, &btree, &target, false);
         
-        do
-        {
+        do {
             // get the key pointed to by the cursor
             state = itzam_btree_cursor_read(&cursor,(void *)&rec);
             
-            if (state == ITZAM_OKAY)
-            {
+            if (state == ITZAM_OKAY) {
                 printf("%d, ",rec);
                 fflush(stdout);
             }
@@ -191,11 +165,10 @@ itzam_bool test_btree_cursor(int testn)
     }
     
     // done
-    return itzam_true;
+    return true;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     int result = EXIT_FAILURE;
     int testn = 50;
     int32_t seed = (int32_t)time(NULL);

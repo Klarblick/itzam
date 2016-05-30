@@ -99,7 +99,7 @@ int compare_keys(const void * key1, const void * key2)
 /*----------------------------------------------------------
  * tests
  */
-itzam_bool test_btree_strvar()
+bool test_btree_strvar()
 {
     itzam_btree  btree;
     itzam_btree_cursor cursor;
@@ -209,24 +209,23 @@ itzam_bool test_btree_strvar()
         state = itzam_btree_cursor_free(&cursor);
 
         if (state != ITZAM_OKAY)
-            return itzam_false;
+            return false;
     }
 
     state = itzam_btree_close(&btree);
 
     if (state != ITZAM_OKAY)
-        return itzam_false;
+        return false;
 
-    return itzam_true;
+    return true;
 }
 
 int main(int argc, char* argv[])
 {
     int result = EXIT_FAILURE;
 
-    itzam_set_default_error_handler(error_handler);
-
     init_test_prng((long)time(NULL));
+    itzam_set_default_error_handler(error_handler);
 
     if (test_btree_strvar())
         result = EXIT_SUCCESS;

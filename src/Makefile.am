@@ -1,5 +1,5 @@
 INCLUDES = -I$(top_srcdir)
-CFLAGS = @CFLAGS@ -std=gnu99
+CFLAGS = @CFLAGS@ -std=gnu11 -O3
 
 h_sources = itzam.h
 

@@ -23,36 +23,28 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-/*----------------------------------------------------------
- *  Report an itzam error
- */
-void not_okay(itzam_state state)
-{
+//-- Report an itzam error
+void not_okay(itzam_state state) {
     fprintf(stderr, "\nItzam problem: %s\n", STATE_MESSAGES[state]);
     exit(EXIT_FAILURE);
 }
 
-void error_handler(const char * function_name, itzam_error error)
-{
+void error_handler(const char * function_name, itzam_error error) {
     fprintf(stderr, "Itzam error in %s: %s\n", function_name, ERROR_STRINGS[error]);
     exit(EXIT_FAILURE);
 }
 
-/*----------------------------------------------------------
- * tests
- */
-
+//-- tests
+ 
 #define REC_SIZE 2560 /// x 4 bytes = 10240 bytes per record
 
-typedef struct record_t
-{
+typedef struct record_t {
     uint32_t m_key;
     uint32_t m_data[REC_SIZE];
 }
 record;
 
-int compare_recs(const void * key1, const void * key2)
-{
+int compare_recs(const void * key1, const void * key2) {
     int result = 0;
 
     record * k1 = (record *)key1;
@@ -66,8 +58,7 @@ int compare_recs(const void * key1, const void * key2)
     return result;
 }
 
-itzam_bool test_btree_insert()
-{
+bool test_btree_insert() {
     itzam_btree  btree;
     itzam_state  state;
     record       rec;
@@ -87,24 +78,21 @@ itzam_bool test_btree_insert()
 
     state = itzam_btree_create(&btree, filename, order, sizeof(record), compare_recs, error_handler);
 
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         not_okay(state);
-        return itzam_false;
+        return false;
     }
 
-    for (n = 1; n <= test_size; ++ n)
-    {
+    for (n = 1; n <= test_size; ++ n)  {
         rec.m_key = n;
         rec.m_data[0] = n;
         rec.m_data[REC_SIZE - 1] = n;
 
         state = itzam_btree_insert(&btree,(const void *)&rec);
 
-        if (state != ITZAM_OKAY)
-        {
+        if (state != ITZAM_OKAY) {
             not_okay(state);
-            return itzam_false;
+            return false;
         }
     }
 
@@ -119,17 +107,13 @@ itzam_bool test_btree_insert()
     itzam_btree_cursor cursor;
     state = itzam_btree_cursor_create(&cursor, &btree);
 
-    if (state == ITZAM_OKAY)
-    {
-        do
-        {
+    if (state == ITZAM_OKAY) {
+        do {
             // get the key pointed to by the cursor
             state = itzam_btree_cursor_read(&cursor,(void *)&rec);
 
-            if (state == ITZAM_OKAY)
-            {
-                if ((rec.m_key != rec.m_data[0]) || (rec.m_key != rec.m_data[REC_SIZE - 1]))
-                {
+            if (state == ITZAM_OKAY) {
+                if ((rec.m_key != rec.m_data[0]) || (rec.m_key != rec.m_data[REC_SIZE - 1])) {
                     printf("ERROR: record retrieved for %u does not match %u or %u\n",rec.m_key,rec.m_data[0],rec.m_data[REC_SIZE - 1]);
                     break;
                 }
@@ -142,22 +126,20 @@ itzam_bool test_btree_insert()
         state = itzam_btree_cursor_free(&cursor);
 
         if (state != ITZAM_OKAY)
-            return itzam_false;
+            return false;
     }
 
     state = itzam_btree_close(&btree);
 
-    if (state != ITZAM_OKAY)
-    {
+    if (state != ITZAM_OKAY) {
         not_okay(state);
-        return itzam_false;
+        return false;
     }
 
-    return itzam_true;
+    return true;
 }
 
-int main(int argc, char* argv[])
-{
+int main(int argc, char* argv[]) {
     int result = EXIT_FAILURE;
 
     itzam_set_default_error_handler(error_handler);
