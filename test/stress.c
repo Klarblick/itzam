@@ -126,7 +126,7 @@ bool test_btree_stress() {
     bool *       save_flags       = NULL;
     itzam_int    save_add_count   = 0;
     itzam_int    save_rem_count   = 0;
-    char *       filename         = "stress.itzam";
+    char *       filename         = "stress.itz";
     itzam_int    maxkey           =  2500000;
     itzam_int    test_size        = 10000000;
     int          order            = 25;

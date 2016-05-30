@@ -130,8 +130,8 @@ static void createdb(const char * filename, uint16_t order) {
 
 static bool test_threaded() {
     const uint16_t order = 11;
-    char * sfilename = "threaded.single";
-    char * mfilename = "threaded.multi";
+    char * sfilename = "sthreaded.itz";
+    char * mfilename = "mthreaded.itz";
     time_t start;
     int maxkey = 10000;
     int test_size = 10000000;
