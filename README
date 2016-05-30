@@ -5,11 +5,9 @@ This document is a work in progress. I tend to learn by looking at code, and str
 
 Itzam/C manages data storage using B-tree indexes, storing key-value pairs. Keys are identifiers of any fixed-length type for their associated value, and there is a one-to-one relationship between keys and values. Itzam/C supports transactions with rollback, multiple threads accessing the same database, and other features not usually found in small database engines.
 
-In the real world, Itzam/C is the foundation of many business applications, including mission-critical systems running 24/365.
+In the real world, Itzam/C is the foundation of several business applications, including mission-critical systems running 24/365.
 
-Currently, Itzam is a C99 64-bit only engine enabled for threaded applications. 
-I will be updating this for the latest C standard.
-I may be removing Windows support in the future, as it clutters the code.
+Currently, Itzam is a C99 64-bit only engine enabled for threaded applications, written in C11. 
 
 Itzam is not a SQL database, or something that can be accessed from ADO. You can build relational (or network, or...) database systems with Itzam as the underlying mechanic — but that really isn't what Itzam was meant for. The vast majority of applications do not need Oracle or SQL Server — they need a simple way to associate information with a key value, for retrieval. This is the niche Itzam occupies.
 
@@ -29,35 +27,35 @@ License
 
 From version 7.0 forward, Itzam is licensed under the FreeBSD License (aka, the Simplified BSD License). It is as follows:
 
-Redistribution and use in source and binary forms, with or without modification,
-are permitted provided that the following conditions are met:
+        Redistribution and use in source and binary forms, with or without modification,
+        are permitted provided that the following conditions are met:
 
-   1. Redistributions of source code must retain the
-      above copyright notice, this list of conditions
-      and the following disclaimer.
+           1. Redistributions of source code must retain the
+              above copyright notice, this list of conditions
+              and the following disclaimer.
 
-   2. Redistributions in binary form must reproduce the
-      above copyright notice, this list of conditions and
-      the following disclaimer in the documentation and/or
-      other materials provided with the distribution.
+           2. Redistributions in binary form must reproduce the
+              above copyright notice, this list of conditions and
+              the following disclaimer in the documentation and/or
+              other materials provided with the distribution.
 
-THIS SOFTWARE IS PROVIDED BY SCOTT ROBERT LADD ``AS IS'' AND ANY EXPRESS OR
-IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
-EVENT SHALL SCOTT ROBERT LADD OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
-AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
-TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+        THIS SOFTWARE IS PROVIDED BY SCOTT ROBERT LADD ``AS IS'' AND ANY EXPRESS OR
+        IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+        MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+        EVENT SHALL SCOTT ROBERT LADD OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+        INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+        (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+        LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED
+        AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR
+        TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+        OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-The views and conclusions contained in the software and documentation are those
-of the author alone, and should not be interpreted as representing the official
-policies, either expressed or implied, of anyoen other than Scott Robert Ladd.
+        The views and conclusions contained in the software and documentation are those
+        of the author alone, and should not be interpreted as representing the official
+        policies, either expressed or implied, of anyoen other than Scott Robert Ladd.
 
 Older versions were released under various incarnations of the GPL. I won't bore you with details of why I've meandered through various Open Source/Free Software licenses; suffice it to say that the balkanization and politics of the Free Software movement have rubbed me very raw.
 
-Individual and corporate licensing is available under a closed-source license; I also provide maintenance contracts and custom development. For such matters, please contact me at scott.ladd@coyotegulch.com or scott.ladd@gmail.com.
+Individual and corporate licensing is available under a closed-source license; I also provide maintenance contracts and custom development. For such matters, please contact me at scott.ladd@drakontos.com or scott.ladd@gmail.com.
 
-See ItzamDocumentation.html for complete API documentation.
+See itzamdoc.html for more documentation.
