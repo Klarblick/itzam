@@ -4,12 +4,12 @@ AC_CONFIG_MACRO_DIR([m4])
 GENERIC_LIBRARY_NAME=libitzam
 
 #release versioning
-GENERIC_MAJOR_VERSION=6
+GENERIC_MAJOR_VERSION=7
 GENERIC_MINOR_VERSION=0
-GENERIC_MICRO_VERSION=5
+GENERIC_MICRO_VERSION=0
 
 #shared library versioning
-GENERIC_LIBRARY_VERSION=6:5:1
+GENERIC_LIBRARY_VERSION=7:0:0
 
 AC_SUBST(GENERIC_LIBRARY_VERSION)
 
@@ -47,9 +47,6 @@ AC_FUNC_STAT
 AC_CHECK_FUNCS([memset strcasecmp strtol strtoul])
 AC_CHECK_LIB([rt], [clock_gettime])
 
-AC_CONFIG_FILES([Makefile
-                 libitzam.pc
-                 src/Makefile
-                 test/Makefile])
+AC_CONFIG_FILES([Makefile libitzam.pc src/Makefile test/Makefile])
 
 AC_OUTPUT

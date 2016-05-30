@@ -5,7 +5,7 @@ includedir=${prefix}/include
 
 Name: libitzam
 Description: A concise embedded database engine in C, by Scott Robert Ladd
-Version: 6.0.5
+Version: 7.0.0
 Libs: -L${libdir} -llibitzam
 Cflags: -I${includedir}/libitzam -I${libdir}/libitzam/include
 
